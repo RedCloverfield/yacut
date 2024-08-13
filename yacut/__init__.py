@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
@@ -10,3 +8,4 @@ app.config.from_object(Config)
 db = SQLAlchemy(app)
 
 from .models import URLMap
+from . import views
