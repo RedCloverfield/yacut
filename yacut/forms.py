@@ -10,6 +10,6 @@ class URLForm(FlaskForm):
     )
     custom_id = URLField(
         label='Ваш вариант короткой ссылки',
-        validators=[Length(1, 16, message='Длина короткой ссылки не должна превышать 16 символов'), Optional()]
+        validators=[Length(1, 16, message='Длина короткого идентификатора не должна превышать 16 символов'), Optional()]
     )
-    submit = SubmitField()
+    submit = SubmitField('Создать')
