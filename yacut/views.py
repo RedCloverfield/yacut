@@ -1,7 +1,7 @@
 from random import choice
 from string import ascii_lowercase, ascii_uppercase, digits
 
-from flask import flash, render_template
+from flask import flash, render_template, redirect
 
 from yacut import app, db
 from .forms import URLForm
@@ -14,26 +14,33 @@ SYMBOLS_FOR_SHORT_ID = ascii_lowercase + ascii_uppercase + digits
 def index_view():
     form = URLForm()
     if form.validate_on_submit():
-        short_url = form.custom_id.data
-        if short_url:
-            if URLMap.query.filter_by(short=short_url).first():
+        if (short_id := form.custom_id.data):
+            if URLMap.query.filter_by(short=short_id).first():
                 flash('Предложенный вариант короткой ссылки уже существует')
                 return render_template('index.html', form=form)
         else:
-            short_url = get_unique_short_id()
-        db.session.add(URLMap(
-            original=form.original_link.data,
-            short=short_url)
+            short_id = get_unique_short_id()
+        db.session.add(
+            URLMap(
+                original=form.original_link.data,
+                short=short_id
+            )
         )
         db.session.commit()
+        return render_template('index.html', form=form, short_id=short_id)
     return render_template('index.html', form=form)
+
+
+@app.route('/<string:short_id>/', methods=['GET'])
+def redirect_view(short_id):
+    url = URLMap.query.filter_by(short=short_id).first_or_404().original
+    return redirect(url, code=302)
 
 
 def get_unique_short_id():
     short_id = ''
     for i in range(6):
         short_id += choice(SYMBOLS_FOR_SHORT_ID)
-    short_url = f'http://127.0.0.1:5000/{short_id}'
-    if URLMap.query.filter_by(short=short_url).first():
+    if URLMap.query.filter_by(short=short_id).first():
         get_unique_short_id()
     return short_id
