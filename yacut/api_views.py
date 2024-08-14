@@ -1,6 +1,7 @@
 from flask import jsonify, request, url_for
 
 from yacut import app, db
+from .constants import Messages
 from .error_handlers import InvalidAPIUsage
 from .models import URLMap
 from .views import get_unique_short_id
@@ -11,19 +12,19 @@ from settings import SYMBOLS_FOR_SHORT_ID
 def create_short_url():
     data = request.get_json(silent=True)
     if data is None:
-        raise InvalidAPIUsage('Отсутствует тело запроса')
+        raise InvalidAPIUsage(Messages.BLANK_REQUEST_BODY)
     if data.get('url') is None:
-        raise InvalidAPIUsage('"url" является обязательным полем!')
+        raise InvalidAPIUsage(Messages.BLANK_URL_FIELD)
     if custom_id := data.get('custom_id'):
         if len(custom_id) > 16:
-            raise InvalidAPIUsage('Указано недопустимое имя для короткой ссылки')
+            raise InvalidAPIUsage(Messages.INCORRECT_ID_FIELD_VALUE)
         for symbol in custom_id:
             if symbol not in SYMBOLS_FOR_SHORT_ID:
-                raise InvalidAPIUsage('Указано недопустимое имя для короткой ссылки')
+                raise InvalidAPIUsage(Messages.INCORRECT_ID_FIELD_VALUE)
     else:
         custom_id = get_unique_short_id()
     if URLMap.query.filter_by(short=custom_id).first():
-        raise InvalidAPIUsage('Предложенный вариант короткой ссылки уже существует.')
+        raise InvalidAPIUsage(Messages.ID_ALREADY_EXISTS)
     db.session.add(
         URLMap(
             original=data.get('url'),
@@ -39,4 +40,4 @@ def create_short_url():
 def get_original_link(short_id):
     if url := URLMap.query.filter_by(short=short_id).first():
         return jsonify({'url': url.original}), 200
-    raise InvalidAPIUsage('Указанный id не найден', 404)
+    raise InvalidAPIUsage(Messages.ID_NOT_FOUND, 404)

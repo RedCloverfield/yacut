@@ -2,10 +2,12 @@ from random import choice
 
 from flask import flash, render_template, redirect
 
+from settings import SYMBOLS_FOR_SHORT_ID
+
 from yacut import app, db
+from .constants import Messages
 from .forms import URLForm
 from .models import URLMap
-from settings import SYMBOLS_FOR_SHORT_ID
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -14,7 +16,7 @@ def index_view():
     if form.validate_on_submit():
         if (short_id := form.custom_id.data):
             if URLMap.query.filter_by(short=short_id).first():
-                flash('Предложенный вариант короткой ссылки уже существует.')
+                flash(Messages.ID_ALREADY_EXISTS)
                 return render_template('index.html', form=form)
         else:
             short_id = get_unique_short_id()
