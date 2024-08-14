@@ -14,7 +14,7 @@ def index_view():
     if form.validate_on_submit():
         if (short_id := form.custom_id.data):
             if URLMap.query.filter_by(short=short_id).first():
-                flash('Предложенный вариант короткой ссылки уже существует')
+                flash('Предложенный вариант короткой ссылки уже существует.')
                 return render_template('index.html', form=form)
         else:
             short_id = get_unique_short_id()
@@ -29,7 +29,7 @@ def index_view():
     return render_template('index.html', form=form)
 
 
-@app.route('/<string:short_id>/', methods=['GET'])
+@app.route('/<string:short_id>', methods=['GET'])
 def redirect_view(short_id):
     url = URLMap.query.filter_by(short=short_id).first_or_404().original
     return redirect(url, code=302)
