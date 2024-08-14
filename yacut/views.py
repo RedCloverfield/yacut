@@ -1,13 +1,11 @@
 from random import choice
-from string import ascii_lowercase, ascii_uppercase, digits
 
 from flask import flash, render_template, redirect
 
 from yacut import app, db
 from .forms import URLForm
 from .models import URLMap
-
-SYMBOLS_FOR_SHORT_ID = ascii_lowercase + ascii_uppercase + digits
+from settings import SYMBOLS_FOR_SHORT_ID
 
 
 @app.route('/', methods=['GET', 'POST'])
