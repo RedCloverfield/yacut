@@ -1,10 +1,11 @@
 from flask import jsonify, render_template
 
-from yacut import app
+from yacut import app, db
+from .constants import Statuses
 
 
 class InvalidAPIUsage(Exception):
-    status_code = 400
+    status_code = Statuses.BAD_REQUEST
 
     def __init__(self, message, status_code=None):
         super().__init__()
@@ -23,9 +24,10 @@ def invalid_api_usage(error):
 
 @app.errorhandler(404)
 def page_not_found(error):
-    return render_template('404.html'), 404
+    return render_template('404.html'), Statuses.NOT_FOUND
 
 
 @app.errorhandler(500)
 def internal_error(error):
-    return render_template('500.html'), 500
+    db.session.rollback()
+    return render_template('500.html'), Statuses.INTERNAL_ERROR
