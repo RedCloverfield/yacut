@@ -60,8 +60,8 @@
                 {% endfor %}
               {% elif form.validate_on_submit() %}
                 Ваша новая ссылка готова:
-                <a href="{{ url_for('redirect_view', short_id=short_id, _external=True) }}">
-                  {{ url_for('redirect_view', short_id=short_id, _external=True) }}
+                <a href="{{ url_for('redirect_view', short=short, _external=True) }}">
+                  {{ url_for('redirect_view', short=short, _external=True) }}
                 </a>
               {% endif %}
             {% endwith %}
