@@ -17,24 +17,20 @@
             {{ form.csrf_token }}
             <div>
               <div>
-                {{ form.original_link(class="form-control form-control-lg py-2 mb-3", id="form-title", placeholder=form.original_link.label.text) }} {# type="text" #}
-                {% if form.original_link.errors %}
-                  <p>
-                    {% for error in form.original_link.errors %}
-                    <span style="color:red">{{ error }}</span>
-                    {% endfor %}
-                  </p>
-                {% endif %}
+                {{ form.original_link(class="form-control form-control-lg py-2 mb-3", id="form-title", placeholder=form.original_link.label.text) }}
+                <p>
+                  {% for error in form.original_link.errors %}
+                  <span style="color:red">{{ error }}</span>
+                  {% endfor %}
+                </p>
               </div>
               <div>
-                {{ form.custom_id(class="form-control form-control-lg py-2 mb-3", id="form-link", placeholder=form.custom_id.label.text) }} {# type="url" #}
-                {% if form.custom_id.errors %}
-                  <p>
-                    {% for error in form.custom_id.errors %}
-                    <span style="color:red">{{ error }}</span>
-                    {% endfor %}
-                  </p>
-                {% endif %}
+                {{ form.custom_id(class="form-control form-control-lg py-2 mb-3", id="form-link", placeholder=form.custom_id.label.text) }}
+                <p>
+                  {% for error in form.custom_id.errors %}
+                  <span style="color:red">{{ error }}</span>
+                  {% endfor %}
+                </p>
               </div>
 
               {{ form.submit(class="btn btn-primary") }}
@@ -54,17 +50,18 @@
           <p class="text-center">
           <h5 class="text-center">
             {% with messages = get_flashed_messages() %}
-              {% if messages %}
-                {% for message in messages %}
-                  {{ message }}
-                {% endfor %}
-              {% elif form.validate_on_submit() %}
-                Ваша новая ссылка готова:
-                <a href="{{ url_for('redirect_view', short=short, _external=True) }}">
-                  {{ url_for('redirect_view', short=short, _external=True) }}
-                </a>
-              {% endif %}
+              {% for message in messages %}
+                {{ message }}
+              {% endfor %}
             {% endwith %}
+          </h5>
+          <h5 class="text-center">
+            {% if short_url %}
+              Ваша новая ссылка готова:
+              <a href="{{ short_url }}">
+                {{ short_url }}
+              </a>
+            {% endif %}
           </h5>
           </p>
         </div>
