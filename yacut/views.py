@@ -1,10 +1,6 @@
-from random import choices
+from flask import flash, render_template, redirect, url_for
 
-from flask import flash, render_template, redirect
-
-from yacut import app, db
-from settings import SYMBOLS_FOR_SHORT_ID
-from .constants import Messages
+from yacut import app
 from .forms import URLForm
 from .models import URLMap
 
@@ -14,30 +10,27 @@ def index_view():
     form = URLForm()
     if not form.validate_on_submit():
         return render_template('index.html', form=form)
-    if (short := form.custom_id.data):
-        if URLMap.query.filter_by(short=short).first():
-            flash(Messages.ID_ALREADY_EXISTS)
-            return render_template('index.html', form=form)
-    else:
-        short = get_unique_short_id()
-    db.session.add(
-        URLMap(
+    try:
+        url = URLMap.create(
             original=form.original_link.data,
-            short=short
+            short=form.custom_id.data
         )
-    )
-    db.session.commit()
-    return render_template('index.html', form=form, short=short)
+        return render_template(
+            'index.html',
+            form=form,
+            short=url.short,
+            short_url=get_short_url(url.short)
+        )
+    except RuntimeError as error:
+        flash(str(error))
+        return render_template('index.html', form=form)
 
 
 @app.route('/<string:short>', methods=['GET'])
 def redirect_view(short):
-    url = URLMap.query.filter_by(short=short).first_or_404().original
+    url = URLMap.get(short, return_error=True).original
     return redirect(url, code=302)
 
 
-def get_unique_short_id():
-    short = ''.join(choices(SYMBOLS_FOR_SHORT_ID, k=6))
-    if URLMap.query.filter_by(short=short).first():
-        get_unique_short_id()
-    return short
+def get_short_url(short):
+    return url_for('redirect_view', short=short, _external=True)

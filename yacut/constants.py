@@ -6,6 +6,10 @@ class Messages():
     BLANK_URL_FIELD = '"url" является обязательным полем!'
     INCORRECT_ID_FIELD_VALUE = 'Указано недопустимое имя для короткой ссылки'
     ID_NOT_FOUND = 'Указанный id не найден'
+    GENERATION_ERROR = (
+        'Не удалось создать короткий идентификатор.'
+        'Попробуйте еще раз или обратитесь в техническую поддержку'
+    )
 
 
 class Statuses():
@@ -16,3 +20,5 @@ class Statuses():
 
 ORIGINAL_LINK_LENGTH = 500
 SHORT_ID_LENGTH = 16
+
+MAX_ATTEMPTS = 50

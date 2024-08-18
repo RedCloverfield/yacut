@@ -1,8 +1,9 @@
 import os
-from string import ascii_lowercase, ascii_uppercase, digits
+from string import ascii_letters, digits
 
 
-SYMBOLS_FOR_SHORT_ID = ascii_lowercase + ascii_uppercase + digits
+SYMBOLS_FOR_SHORT_ID = ascii_letters + digits
+SHORT_ID_PATTERN = f'^[{SYMBOLS_FOR_SHORT_ID}]*$'
 
 
 class Config(object):
