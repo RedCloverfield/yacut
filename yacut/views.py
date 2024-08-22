@@ -1,3 +1,5 @@
+from http import HTTPStatus
+
 from flask import flash, render_template, redirect, url_for
 
 from yacut import app
@@ -29,7 +31,7 @@ def index_view():
 @app.route('/<string:short>', methods=['GET'])
 def redirect_view(short):
     url = URLMap.get(short, return_error=True).original
-    return redirect(url, code=302)
+    return redirect(url, code=HTTPStatus.FOUND)
 
 
 def get_short_url(short):

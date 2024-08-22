@@ -1,3 +1,5 @@
+from http import HTTPStatus
+
 from flask import jsonify, request
 
 from yacut import app
@@ -18,11 +20,11 @@ def create_short_url():
     url = URLMap.create(original, data.get('custom_id'), api_validation=True)
     return jsonify(
         {'url': url.original, 'short_link': get_short_url(url.short)}
-    ), 201
+    ), HTTPStatus.CREATED
 
 
 @app.route('/api/id/<string:short>/', methods=['GET'])
 def get_original_link(short):
     if url := URLMap.query.filter_by(short=short).first():
-        return jsonify({'url': url.original}), 200
-    raise InvalidAPIUsage(Messages.ID_NOT_FOUND, 404)
+        return jsonify({'url': url.original}), HTTPStatus.OK
+    raise InvalidAPIUsage(Messages.ID_NOT_FOUND, HTTPStatus.NOT_FOUND)
